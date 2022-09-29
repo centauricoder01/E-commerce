@@ -4,3 +4,4 @@
 - cart option
 - check out option 
 and many more
+* Here is a sample of the Website : https://centauri.netlify.app/
