@@ -1,4 +1,5 @@
-import React from "react";
+import React, { createContext, useReducer } from "react";
+import { CartReducer } from "./reducer";
 
 // 1. create cart context and cart context provider for the entire application to have cart related data;
 
@@ -6,8 +7,20 @@ import React from "react";
 
 // 3. send both state and dispatch values so that entire application has access to the state and dispatch function;
 
-const CartContextProvider = () => {
-  return <>CartContextProvider</>;
+export const CartContext = createContext();
+
+const CartInitalize = {
+  cartData: [],
+  checkoutData: [],
+};
+
+const CartContextProvider = ({ children }) => {
+  const [CartState, Cartdispatch] = useReducer(CartReducer, CartInitalize);
+  return (
+    <CartContext.Provider value={{ CartState, Cartdispatch }}>
+      {children}
+    </CartContext.Provider>
+  );
 };
 
 export default CartContextProvider;

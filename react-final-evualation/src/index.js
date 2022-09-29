@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import AuthContextProvider from "./Context/AuthContext/AuthContextProvider";
+import CartContextProvider from "./Context/CartContext/CartContextProvider";
 
 // import all context providers
 
@@ -12,9 +13,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   
   <AuthContextProvider>
-    <BrowserRouter>
-    <App />
-  </BrowserRouter>
+    <CartContextProvider>
+      <BrowserRouter>
+      <App />
+    </BrowserRouter>
+    </CartContextProvider>
   </AuthContextProvider>
 );
 

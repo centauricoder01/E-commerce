@@ -24,11 +24,6 @@ const Login = () => {
 
   const [disable, setdisable] = useState(false);
 
-  if (state.auth_state) {
-    console.log("answer");
-    return <Navigate to={"/"} />;
-  }
-
   const [formstate, setformstate] = useState({
     name: "",
     password: "",
@@ -53,11 +48,12 @@ const Login = () => {
         setdisable(false);
         alert("Login Successfully");
         console.log(response.data);
-        dispatch({ type: "ERROR" });
-
-        // payload: {
-        // token: response.data;
-        // }
+        dispatch({
+          type: "TOKEN",
+          payload: {
+            token: response.data,
+          },
+        });
       })
       .catch(function (error) {
         setdisable(false);
@@ -69,9 +65,11 @@ const Login = () => {
   const onsubmitcalled = (e) => {
     e.preventDefault();
     postrequest();
-    console.log(formstate);
   };
 
+  if (state.auth_state) {
+    return <Navigate to={"/"} />;
+  }
   return (
     <>
       <form onSubmit={onsubmitcalled}>

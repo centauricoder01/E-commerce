@@ -1,7 +1,9 @@
-import React, { useEffect,useState } from "react";
-import  axios  from "axios";
-import { Box,Button,Text,Image, Grid } from "@chakra-ui/react";
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Box, Button, Text, Image, Grid } from "@chakra-ui/react";
+import { useContext } from "react";
+import { CartContext } from "../Context/CartContext/CartContextProvider";
+
 // 0. axios should be used for making network requests;
 
 // 1. API request should be made to `https://fakestoreapi.com/products` on mount and get the data and the same data should be displayed in the form of cards ( 3 per row in large screens, 2 per row  in medium screens and 1 per row  in small screen  )
@@ -15,44 +17,80 @@ import { useSearchParams } from "react-router-dom";
 // 5. clicking on add to cart button will add the product to the cart; this cart is maintained in the cart context; as useReducer has been used for state management in cart context; you need to dispatch some add_to_cart action to add new product to the cart.
 
 const Home = () => {
+  const { CartState, Cartdispatch } = useContext(CartContext);
 
-const [data, setData] = useState([])
-const [url, seturl] = useSearchParams()
-const GettingData = () => {
-  axios.get(`https://jabz-101-app.herokuapp.com/products`)
-    .then(function (response) {
-      setData(response.data);
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-};
+  console.log(CartState);
+  const [data, setData] = useState([]);
+
+  const GettingData = () => {
+    axios
+      .get(`https://jabz-101-app.herokuapp.com/products`)
+      .then(function (response) {
+        setData(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     GettingData();
   }, []);
 
-  console.log(url)
+  const disabledButton = (id, cartitems) => {
+    if (cartitems.find((item) => item.id === id)) {
+      return true;
+    }
+
+    return false;
+  };
 
   return (
-    <Grid templateColumns={{
-            base: 'repeat(1, 1fr)',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
-            lg: 'repeat(4, 1fr)',
-            "2xl": 'repeat(5, 1fr)',
-          }} gap={2}>
-      {
-        data.map((ele) =>(
-          <Box key={ele.id} borderWidth="2px" borderColor="gray.200" textAlign="center">
-              <Image boxSize='200px' src={ele.image} alt='Dan Abramov' alignContent="center" m={2}/>
-              <Text fontSize='xl' m={2}>{ele.title}</Text>
-              <Text fontSize='md' m={2}>INR : {ele.price}</Text>
-              <Button colorScheme='blue' m={2} onClick={() =>{seturl(ele.id)}} >Add To Cart</Button>
-          </Box>
-        ))
-      }
-
+    <Grid
+      templateColumns={{
+        base: "repeat(1, 1fr)",
+        sm: "repeat(2, 1fr)",
+        md: "repeat(3, 1fr)",
+        lg: "repeat(4, 1fr)",
+        "2xl": "repeat(5, 1fr)",
+      }}
+      gap={2}
+    >
+      {data.map((ele) => (
+        <Box
+          key={ele.id}
+          borderWidth="2px"
+          borderColor="gray.200"
+          textAlign="center"
+        >
+          <Image
+            boxSize="200px"
+            src={ele.image}
+            alt="Dan Abramov"
+            alignContent="center"
+            m={2}
+          />
+          <Text fontSize="xl" m={2}>
+            {ele.title}
+          </Text>
+          <Text fontSize="md" m={2}>
+            INR : {ele.price}
+          </Text>
+          <Button
+            colorScheme="blue"
+            m={2}
+            disabled={disabledButton(ele.id, CartState.cartData)}
+            onClick={() => {
+              Cartdispatch({
+                type: "ADD_TO_CART",
+                payload: ele,
+              });
+            }}
+          >
+            Add To Cart
+          </Button>
+        </Box>
+      ))}
     </Grid>
   );
 };
